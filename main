@@ -1,0 +1,64 @@
+# Nombres: Mariana Rincón y Andrea Gonzalez 
+
+
+def bytes_a_entero(chunk):
+    # Convierte una secuencia de bytes little-endian en un entero,
+    # sumando cada byte multiplicado por su potencia de 256.
+    numero = 0
+    for posicion, byte in enumerate(chunk):
+        numero += byte * (256 ** posicion)
+    return numero
+
+
+def raiz_entera(n):
+    # Aproxima la raíz cuadrada de n usando el método de Newton,
+    # y ajusta el resultado para que sea la raíz entera.
+    if n < 2:
+        return n
+
+    x = n
+    y = (x + 1) // 2
+    while y < x:
+        x = y
+        y = (x + n // x) // 2
+
+    return x
+
+
+def is_prime(number):
+    # funcion que determina si un número es primo.
+    if number < 2:
+        return False
+    limite = raiz_entera(number)
+    return all(
+        number % i != 0
+        for i in range(2, limite + 1)
+    )
+
+
+def leer_numeros(ruta):
+    # Lee el archivo binario y lo divide en bloques de 4 bytes.
+    with open(ruta, 'rb') as f:
+        data = f.read()
+
+    numeros = []
+    for i in range(0, len(data), 4):
+        chunk = data[i:i + 4]
+        numeros.append(bytes_a_entero(chunk))
+    return numeros
+
+
+def main():
+    ruta = "numbers.bin"
+    numeros = leer_numeros(ruta)
+
+    print(f"Total de números leídos: {len(numeros)}")
+
+    primos = [n for n in numeros if is_prime(n)]
+
+    print(f"Cantidad de números primos: {len(primos)}")
+    print(f"Primeros 10 primos encontrados: {primos[:10]}")
+
+
+if __name__ == "__main__":
+    main()
